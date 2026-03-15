@@ -265,13 +265,12 @@
   <div class="confetti" id="confetti"></div>
 
   <script>
-    // ========== KİŞİSELLEŞTİR: İsim, mesaj ve fotoğraflar ==========
+    // ========== KİŞİSELLEŞTİR: İsim, intro, mesaj ve fotoğraflar ==========
     const CONFIG = {
-      partnerName: 'Sevgilim',  // Sevgilinin ismi
-      message: `Bunu yapabildiğin için tebrikler! Sen harikasın.
-Seninle olmak benim için çok özel.
-İyi ki varsın. 💕`,
-      // Tek fotoğraf: düşen öğe olarak bu görsel kullanılıyor.
+      partnerName: 'Sevgilim',  // Karşılama: "Merhaba, ..."
+      introSubtitle: 'Düşen fotoğraflara tıkla!',  // Alt satır metni
+      message: `Aşkımmmm seni çok seviyorummmm
+İyi ki hayatımdasınnnn 💕`,
       photoPaths: ['photos/sevgili.png']
     };
 
@@ -303,13 +302,12 @@ Seninle olmak benim için çok özel.
     messageText.textContent = CONFIG.message;
     goalNum.textContent = GOAL;
 
+    if (introSub && CONFIG.introSubtitle) introSub.innerHTML = CONFIG.introSubtitle;
     if (usePhotos) {
       scoreLabel.textContent = 'Fotoğraflar';
-      if (introSub) introSub.innerHTML = 'Senin için küçük bir sürpriz hazırladım.<br />Düşen fotoğraflara tıkla!';
       if (gameHint) gameHint.textContent = 'Fotoğraflara tıkla 💕';
     } else {
       scoreLabel.textContent = 'Kalpler';
-      if (introSub) introSub.innerHTML = 'Senin için küçük bir sürpriz hazırladım.<br />Önce 10 kalp topla!';
       if (gameHint) gameHint.textContent = 'Kalplere tıkla 💕';
     }
 
