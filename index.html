@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Senin için 💕</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --rose: #e8a0a8;
+      --rose-deep: #c97b84;
+      --cream: #fdf6f0;
+      --gold: #d4a574;
+      --text: #5c4a42;
+      --shadow: rgba(92, 74, 66, 0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: linear-gradient(165deg, #fdf6f0 0%, #f5e6dc 40%, #edd5d0 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: var(--text);
+    }
+
+    .screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+      transition: opacity 0.6s ease;
+    }
+
+    .screen.hidden {
+      display: none;
+    }
+
+    /* ----- INTRO ----- */
+    .intro h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 600;
+      color: var(--rose-deep);
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .intro .sub {
+      font-weight: 300;
+      font-size: 1.1rem;
+      opacity: 0.85;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .btn-start {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 0.9rem 2rem;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--rose) 0%, var(--rose-deep) 100%);
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 20px var(--shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-start:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 24px var(--shadow);
+    }
+
+    /* ----- GAME ----- */
+    .game-area {
+      width: 100%;
+      max-width: 420px;
+      aspect-ratio: 1;
+      background: rgba(255,255,255,0.6);
+      border-radius: 24px;
+      box-shadow: 0 8px 40px var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .score {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--rose-deep);
+    }
+
+    .score span {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+    }
+
+    .hearts-needed {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .falling-heart,
+    .falling-photo {
+      position: absolute;
+      cursor: pointer;
+      user-select: none;
+      animation: wobble 0.5s ease-in-out infinite alternate;
+      filter: drop-shadow(0 2px 8px var(--shadow));
+    }
+
+    .falling-heart {
+      font-size: 2rem;
+    }
+
+    .falling-photo {
+      width: 70px;
+      height: 90px;
+      object-fit: contain;
+      object-position: center;
+      border-radius: 16px;
+      border: 3px solid rgba(255,255,255,0.95);
+      background: rgba(255,255,255,0.3);
+    }
+
+    .falling-heart.caught,
+    .falling-photo.caught {
+      animation: caught 0.4s ease-out forwards;
+    }
+
+    @keyframes wobble {
+      from { transform: rotate(-5deg) scale(1); }
+      to   { transform: rotate(5deg) scale(1.05); }
+    }
+
+    @keyframes caught {
+      to {
+        transform: scale(0);
+        opacity: 0;
+      }
+    }
+
+    /* ----- MESSAGE ----- */
+    .message-card {
+      max-width: 420px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 24px;
+      padding: 2.5rem;
+      box-shadow: 0 12px 48px var(--shadow);
+      text-align: center;
+    }
+
+    .message-card h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.75rem;
+      color: var(--rose-deep);
+      margin-bottom: 1rem;
+    }
+
+    .message-card .text {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: var(--text);
+      white-space: pre-line;
+    }
+
+    .confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      animation: confetti-fall 3s ease-out forwards;
+    }
+
+    @keyframes confetti-fall {
+      to {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    .floating-hearts {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .floating-hearts span {
+      position: absolute;
+      font-size: 1.5rem;
+      opacity: 0.2;
+      animation: float 8s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      25% { transform: translate(10px, -20px) rotate(10deg); }
+      50% { transform: translate(-10px, -40px) rotate(-5deg); }
+      75% { transform: translate(5px, -20px) rotate(5deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="floating-hearts" id="floatingHearts"></div>
+
+  <section class="screen" id="intro">
+    <div class="intro">
+      <h1>Merhaba, <span id="partnerName">Sevgilim</span> 💕</h1>
+      <p class="sub" id="introSub">Senin için küçük bir sürpriz hazırladım.<br />Önce 10 fotoğraf topla!</p>
+      <div style="text-align: center;">
+        <button class="btn-start" id="btnStart">Oyunu Başlat</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen hidden" id="game">
+    <p class="game-header">
+      <span class="score"><span id="scoreLabel">Fotoğraflar</span>: <span id="score">0</span> / <span id="goalNum">10</span></span>
+      <span class="hearts-needed" id="gameHint">Fotoğraflara tıkla 💕</span>
+    </p>
+    <div class="game-area" id="gameArea"></div>
+  </section>
+
+  <section class="screen hidden" id="message">
+    <div class="message-card">
+      <h2>Seni çok seviyorum 💕</h2>
+      <p class="text" id="messageText">Bunu yapabildiğin için tebrikler! Sen harikasın. Seninle olmak benim için çok özel. İyi ki varsın.</p>
+    </div>
+  </section>
+
+  <div class="confetti" id="confetti"></div>
+
+  <script>
+    // ========== KİŞİSELLEŞTİR: İsim, mesaj ve fotoğraflar ==========
+    const CONFIG = {
+      partnerName: 'Sevgilim',  // Sevgilinin ismi
+      message: `Bunu yapabildiğin için tebrikler! Sen harikasın.
+Seninle olmak benim için çok özel.
+İyi ki varsın. 💕`,
+      // Tek fotoğraf: düşen öğe olarak bu görsel kullanılıyor.
+      photoPaths: ['photos/sevgili.png']
+    };
+
+    const HEARTS = ['💕', '❤️', '💗', '💖', '💝'];
+    const GOAL = 10;
+    const FALL_INTERVAL = 1200;
+    const FALL_DURATION = 4;
+
+    const usePhotos = Array.isArray(CONFIG.photoPaths) && CONFIG.photoPaths.length > 0;
+
+    let score = 0;
+    let fallTimer = null;
+    let gameStarted = false;
+
+    const intro = document.getElementById('intro');
+    const game = document.getElementById('game');
+    const messageScreen = document.getElementById('message');
+    const gameArea = document.getElementById('gameArea');
+    const scoreEl = document.getElementById('score');
+    const scoreLabel = document.getElementById('scoreLabel');
+    const goalNum = document.getElementById('goalNum');
+    const introSub = document.getElementById('introSub');
+    const gameHint = document.getElementById('gameHint');
+    const btnStart = document.getElementById('btnStart');
+    const partnerNameEl = document.getElementById('partnerName');
+    const messageText = document.getElementById('messageText');
+
+    partnerNameEl.textContent = CONFIG.partnerName;
+    messageText.textContent = CONFIG.message;
+    goalNum.textContent = GOAL;
+
+    if (usePhotos) {
+      scoreLabel.textContent = 'Fotoğraflar';
+      if (introSub) introSub.innerHTML = 'Senin için küçük bir sürpriz hazırladım.<br />Düşen fotoğraflara tıkla!';
+      if (gameHint) gameHint.textContent = 'Fotoğraflara tıkla 💕';
+    } else {
+      scoreLabel.textContent = 'Kalpler';
+      if (introSub) introSub.innerHTML = 'Senin için küçük bir sürpriz hazırladım.<br />Önce 10 kalp topla!';
+      if (gameHint) gameHint.textContent = 'Kalplere tıkla 💕';
+    }
+
+    // Arka plan kalpleri
+    function createFloatingHearts() {
+      const container = document.getElementById('floatingHearts');
+      for (let i = 0; i < 12; i++) {
+        const span = document.createElement('span');
+        span.textContent = HEARTS[i % HEARTS.length];
+        span.style.left = Math.random() * 100 + '%';
+        span.style.top = Math.random() * 100 + '%';
+        span.style.animationDelay = Math.random() * 4 + 's';
+        span.style.animationDuration = (6 + Math.random() * 4) + 's';
+        container.appendChild(span);
+      }
+    }
+    createFloatingHearts();
+
+    function showScreen(screen) {
+      [intro, game, messageScreen].forEach(s => s.classList.add('hidden'));
+      screen.classList.remove('hidden');
+    }
+
+    function getRandomPhotoSrc() {
+      const paths = CONFIG.photoPaths;
+      return paths[Math.floor(Math.random() * paths.length)];
+    }
+
+    function createFallingItem() {
+      const item = usePhotos ? document.createElement('img') : document.createElement('div');
+      const cssClass = usePhotos ? 'falling-photo' : 'falling-heart';
+
+      item.className = cssClass;
+
+      if (usePhotos) {
+        item.src = getRandomPhotoSrc();
+        item.alt = '';
+        item.loading = 'eager';
+        item.onerror = function () { this.style.display = 'none'; };
+      } else {
+        item.textContent = HEARTS[Math.floor(Math.random() * HEARTS.length)];
+        const size = 28 + Math.random() * 20;
+        item.style.fontSize = size + 'px';
+      }
+
+      item.style.left = (10 + Math.random() * 80) + '%';
+      item.style.top = '-60px';
+
+      item.addEventListener('click', () => {
+        if (item.classList.contains('caught')) return;
+        item.classList.add('caught');
+        score++;
+        scoreEl.textContent = score;
+        setTimeout(() => item.remove(), 400);
+        if (score >= GOAL) {
+          endGame();
+        }
+      });
+
+      gameArea.appendChild(item);
+      requestAnimationFrame(() => {
+        item.style.transition = `top ${FALL_DURATION}s linear`;
+        item.style.top = '100%';
+      });
+
+      setTimeout(() => {
+        if (item.parentNode && !item.classList.contains('caught')) {
+          item.remove();
+        }
+      }, (FALL_DURATION + 1) * 1000);
+    }
+
+    function startGame() {
+      gameStarted = true;
+      score = 0;
+      scoreEl.textContent = '0';
+      showScreen(game);
+      gameArea.innerHTML = '';
+      fallTimer = setInterval(createFallingItem, FALL_INTERVAL);
+    }
+
+    function endGame() {
+      clearInterval(fallTimer);
+      gameArea.querySelectorAll('.falling-heart, .falling-photo').forEach(el => el.remove());
+      showScreen(messageScreen);
+      triggerConfetti();
+    }
+
+    function triggerConfetti() {
+      const colors = ['#e8a0a8', '#c97b84', '#d4a574', '#f5e6dc'];
+      const container = document.getElementById('confetti');
+      for (let i = 0; i < 60; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + '%';
+        piece.style.top = '-10px';
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDelay = Math.random() * 0.5 + 's';
+        piece.style.animationDuration = (2.5 + Math.random() * 1.5) + 's';
+        container.appendChild(piece);
+        setTimeout(() => piece.remove(), 4000);
+      }
+    }
+
+    btnStart.addEventListener('click', startGame);
+  </script>
+</body>
+</html>
