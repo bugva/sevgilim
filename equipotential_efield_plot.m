@@ -1,14 +1,14 @@
-% Eş potansiyel ve E-alan çizgileri (seyrek gösterim)
-% Başlangıç noktası: (26,10), bitiş noktası: (2,10)
+% Es potansiyel ve E-alan cizgileri (seyrek gosterim)
+% Baslangic noktasi: (26,10), bitis noktasi: (2,10)
 
 clear; clc; close all;
 
-%% Kullanıcı ayarları
+%% Kullanici ayarlari
 dataFile = '/home/ubuntu/.cursor/projects/workspace/uploads/equipotential_data_cleaned.csv';
 startPoint = [26, 10];
 endPoint   = [2, 10];
 
-% E-alan oku yoğunluğunu azaltmak için alt örnekleme adımı
+% E-alan oku yogunlugunu azaltmak icin alt ornekleme adimi
 quiverStep = 8;
 
 try
@@ -21,7 +21,7 @@ if isempty(x) || isempty(y) || isempty(V)
     error('CSV icinden gecerli nokta okunamadi.');
 end
 
-%% Interpolasyon ızgarası
+%% Interpolasyon izgara
 xMin = floor(min(x)); xMax = ceil(max(x));
 yMin = floor(min(y)); yMax = ceil(max(y));
 
@@ -33,7 +33,7 @@ yq = linspace(yMin, yMax, ny);
 F = scatteredInterpolant(x, y, V, 'natural', 'none');
 Vq = F(X, Y);
 
-%% Potansiyel konturları
+%% Potansiyel konturlari
 vMin = min(V);
 vMax = max(V);
 contourLevels = linspace(vMin, vMax, 10);
@@ -54,12 +54,12 @@ dy = yq(2) - yq(1);
 Ex = -dVdx;
 Ey = -dVdy;
 
-% NaN bölgelerinden kaçınmak için maske
+% NaN bolgelerinden kacinmak icin maske
 valid = ~isnan(Ex) & ~isnan(Ey);
 Ex(~valid) = 0;
 Ey(~valid) = 0;
 
-% Seyrek vektör gösterimi (çok sık/dik görünmemesi için)
+% Seyrek vektor gosterimi (cok sik/dik gorunmemesi icin)
 idxX = 1:quiverStep:nx;
 idxY = 1:quiverStep:ny;
 Xv = X(idxY, idxX);
@@ -70,13 +70,15 @@ Eyv = Ey(idxY, idxX);
 q = quiver(Xv, Yv, Exv, Eyv, 1.2, 'k', 'LineWidth', 0.9);
 q.MaxHeadSize = 0.7;
 
-% Birkaç E-alan çizgisi (yaklaşık diklik kuralını görselleştirmek için)
+% Birkac E-alan cizgisi (yaklasik diklik kuralini gostermek icin)
 seedX = [26, 24, 22, 20];
 seedY = [10, 10, 10, 10];
 hStream = streamline(X, Y, Ex, Ey, seedX, seedY);
-set(hStream, 'Color', [0.85 0.1 0.1], 'LineWidth', 1.3);
+if ~isempty(hStream)
+    set(hStream, 'Color', [0.85 0.1 0.1], 'LineWidth', 1.3);
+end
 
-%% İstenen başlangıç / bitiş noktaları
+%% Istenen baslangic / bitis noktalari
 hStart = plot(startPoint(1), startPoint(2), 'ro', 'MarkerFaceColor', 'r', 'MarkerSize', 8);
 hEnd = plot(endPoint(1), endPoint(2), 'bo', 'MarkerFaceColor', 'b', 'MarkerSize', 8);
 text(startPoint(1)+0.4, startPoint(2)+0.35, 'Baslangic (26,10)', ...
@@ -84,7 +86,7 @@ text(startPoint(1)+0.4, startPoint(2)+0.35, 'Baslangic (26,10)', ...
 text(endPoint(1)+0.4, endPoint(2)+0.35, 'Bitis (2,10)', ...
     'Color', 'b', 'FontSize', 9, 'FontWeight', 'bold');
 
-%% Hata metriği (Leave-One-Out RMSE) ve grafiğe yazdırma
+%% Hata metrigi (Leave-One-Out RMSE) ve grafikte gosterim
 rmseVal = looRmse(x, y, V);
 plotTitle = sprintf('Es Potansiyel + Seyrek E-Field (LOO RMSE = %.3f V)', rmseVal);
 title(plotTitle, 'FontWeight', 'bold');
@@ -99,7 +101,11 @@ ylabel('y');
 axis equal;
 xlim([xMin xMax]);
 ylim([yMin yMax]);
-hStreamLegend = hStream(1);
+if isempty(hStream)
+    hStreamLegend = plot(nan, nan, '-', 'Color', [0.85 0.1 0.1], 'LineWidth', 1.3);
+else
+    hStreamLegend = hStream(1);
+end
 legend([hContour, q, hStreamLegend, hStart, hEnd], ...
     {'Es potansiyel', 'E-field yonleri', 'E-field cizgileri', 'Baslangic', 'Bitis'}, ...
     'Location', 'southoutside', 'Orientation', 'horizontal');
